@@ -537,6 +537,8 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
   .live .ctas { justify-content: center; }
   .phone-frame { order: -1; width: min(100%, 360px); }
 }
+.bk-video { position: relative; width: 100%; aspect-ratio: 9 / 16; border-radius: 22px; overflow: hidden; transform: rotate(-3deg); background: #000; box-shadow: 0 0 0 1px rgba(241,221,176,.4), 0 30px 70px rgba(0,0,0,.55); }
+.bk-video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 </style>
 
 </head>
@@ -563,8 +565,8 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
 </header>
 
 <section class="hero" id="top">
-  <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="poster.jpg">
-    <source src="hero.mp4" type="video/mp4">
+  <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="poster2.jpg">
+    <source src="hero2.mp4" type="video/mp4">
   </video>
   <div class="wrap">
     <div class="hero-copy">
@@ -603,29 +605,6 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
   </div>
 </div>
 
-<section class="band alt" id="live">
-  <div class="wrap live">
-    <div class="live-copy">
-      <div class="head">
-        <span class="eyebrow">على المسرح</span>
-        <h2>السلطانة على المسارح الكبرى</h2>
-      </div>
-      <p>لقطات من حفلها في مهرجان Passport to the World، حيث امتلأ المسرح بجمهورها وأضاء اسمها الشاشات.</p>
-      <div class="ctas">
-        <a class="btn btn-gold" href="#booking">احجز حفلك</a>
-        <button class="btn btn-ghost" type="button" id="liveSoundBtn">شاهد بالصوت</button>
-      </div>
-    </div>
-    <div class="phone-frame">
-      <video id="liveVideo" src="live.mp4" poster="live.jpg" muted loop playsinline webkit-playsinline preload="metadata" aria-label="هدى عربي على مسرح مهرجان Passport to the World"></video>
-      <button class="live-mute" type="button" id="liveMute" aria-label="تشغيل الصوت" aria-pressed="false">
-        <svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>
-        <svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
-      </button>
-    </div>
-  </div>
-</section>
-
 <section class="band" id="about">
   <div class="wrap about">
     <div class="about-img">
@@ -650,7 +629,30 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
   </div>
 </section>
 
-<section class="band alt" id="concerts">
+<section class="band alt" id="live">
+  <div class="wrap live">
+    <div class="live-copy">
+      <div class="head">
+        <span class="eyebrow">على المسرح</span>
+        <h2>السلطانة على المسارح الكبرى</h2>
+      </div>
+      <p>لقطات من حفلها في مهرجان Passport to the World، حيث امتلأ المسرح بجمهورها وأضاء اسمها الشاشات.</p>
+      <div class="ctas">
+        <a class="btn btn-gold" href="#booking">احجز حفلك</a>
+        <button class="btn btn-ghost" type="button" id="liveSoundBtn">شاهد بالصوت</button>
+      </div>
+    </div>
+    <div class="phone-frame">
+      <video id="liveVideo" src="live.mp4" poster="live.jpg" muted loop playsinline webkit-playsinline preload="metadata" aria-label="هدى عربي على مسرح مهرجان Passport to the World"></video>
+      <button class="live-mute" type="button" id="liveMute" aria-label="تشغيل الصوت" aria-pressed="false">
+        <svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>
+        <svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="concerts">
   <div class="wrap">
     <div class="head center">
       <span class="eyebrow">الحفلات</span>
@@ -676,7 +678,7 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
   </div>
 </section>
 
-<section class="band" id="gallery">
+<section class="band alt" id="gallery">
   <div class="wrap">
     <div class="head center">
       <span class="eyebrow">معرض الصور</span>
@@ -701,7 +703,7 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
   </div>
 </section>
 
-<section class="band alt" id="listen">
+<section class="band" id="listen">
   <div class="wrap">
     <div class="head center">
       <span class="eyebrow">استمع</span>
@@ -782,7 +784,7 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
   </div>
 </section>
 
-<section class="band" id="press">
+<section class="band alt" id="press">
   <div class="wrap">
     <div class="head center">
       <span class="eyebrow">في الإعلام</span>
@@ -806,7 +808,7 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
   </div>
 </section>
 
-<section class="band alt" id="follow">
+<section class="band" id="follow">
   <div class="wrap">
     <div class="head center">
       <span class="eyebrow">تابعها</span>
@@ -823,7 +825,7 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
   </div>
 </section>
 
-<section class="band" id="booking">
+<section class="band alt" id="booking">
   <div class="wrap">
     <div class="booking">
       <div class="booking-copy">
@@ -846,7 +848,7 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
           </div>
         </div>
       </div>
-      <div class="booking-img"><img src="g24.jpg" alt="هدى عربي تحمل بطاقة إدارة أعمالها" loading="lazy"></div>
+      <div class="booking-img"><div class="bk-video"><video id="bkVideo" src="hero.mp4" poster="poster.jpg" muted loop playsinline webkit-playsinline preload="metadata" aria-label="هدى عربي تحمل بطاقة إدارة أعمالها"></video><button class="live-mute" type="button" id="bkMute" aria-label="تشغيل الصوت" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg></button></div></div>
     </div>
   </div>
 </section>
@@ -1030,6 +1032,23 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
       new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) play(); else { v.pause(); if (!v.muted) setSound(false); } }); }, { threshold: 0.25 }).observe(v);
     } else play();
     document.addEventListener('touchstart', function () { if (v.getBoundingClientRect().top < innerHeight) play(); }, { once: true, passive: true });
+  })();
+  (function () {
+    var v = document.getElementById('bkVideo'); if (!v) return;
+    var mb = document.getElementById('bkMute');
+    function play() { var r = v.play(); if (r && r.catch) r.catch(function () {}); }
+    function setSound(on) {
+      v.muted = !on; mb.setAttribute('aria-pressed', on ? 'true' : 'false'); mb.setAttribute('aria-label', on ? 'كتم الصوت' : 'تشغيل الصوت');
+      if (on) {
+        var au = document.getElementById('audio'); if (au && !au.paused) au.pause();
+        var lv = document.getElementById('liveVideo'); if (lv && !lv.muted) document.getElementById('liveMute').click();
+        play();
+      }
+    }
+    mb.addEventListener('click', function () { setSound(v.muted); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) play(); else { v.pause(); if (!v.muted) setSound(false); } }); }, { threshold: 0.25 }).observe(v);
+    } else play();
   })();
   var items = Array.prototype.slice.call(document.querySelectorAll('#galleryGrid button'));
   var lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img'), idx = 0;
