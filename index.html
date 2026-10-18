@@ -513,6 +513,11 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
   .gig .gbtn, .gig .gtag { grid-column: 1 / -1; justify-self: start; }
 }
 @media (prefers-reduced-motion: reduce) { .gig.soon, .tv { animation: none; } }
+.gallery .feature video { pointer-events: none; }
+@media (max-width: 560px) {
+  .gallery .feature { grid-column: 1 / -1; grid-row: span 2; }
+  .gallery .badge { bottom: 12px; inset-inline-start: 12px; font-size: .82rem; padding: 6px 12px; }
+}
 </style>
 
 </head>
@@ -637,7 +642,7 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
       <p>لقطات من الحفلات وجلسات التصوير.</p>
     </div>
     <div class="gallery" id="galleryGrid">
-      <button type="button" class="feature" data-video="stage.mp4"><video src="stage.mp4" poster="stage.jpg" autoplay muted loop playsinline preload="metadata" aria-label="هدى عربي على المسرح في حفل جماهيري"></video><span class="badge"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4v16l13-8z"/></svg>من الحفل</span></button>
+      <button type="button" class="feature" data-video="stage.mp4"><video src="stage-preview.mp4" poster="stage.jpg" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture preload="auto" aria-label="هدى عربي على المسرح في حفل جماهيري"></video><span class="badge"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4v16l13-8z"/></svg>من الحفل</span></button>
       <button type="button"><img src="p4.jpg" alt="هدى عربي بفستان سماوي بنقوش ذهبية" loading="lazy" style="object-position:50% 15%"></button>
       <button type="button"><img src="p1.jpg" alt="هدى عربي على المسرح بفستان كحلي" loading="lazy" style="object-position:50% 20%"></button>
       <button type="button"><img src="p2.jpg" alt="هدى عربي مع وردة حمراء" loading="lazy" style="object-position:50% 25%"></button>
@@ -954,6 +959,16 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
     player.querySelector('.now').style.setProperty('--cover', 'url("cover2.jpg")');
   })();
 
+  (function () {
+    var pv = document.querySelector('#galleryGrid .feature video');
+    if (!pv) return;
+    pv.muted = true;
+    function tryPlay() { var r = pv.play(); if (r && r.catch) r.catch(function () {}); }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) tryPlay(); else pv.pause(); }); }, { threshold: 0.2 }).observe(pv);
+    } else tryPlay();
+    document.addEventListener('touchstart', tryPlay, { once: true, passive: true });
+  })();
   var items = Array.prototype.slice.call(document.querySelectorAll('#galleryGrid button'));
   var lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img'), idx = 0;
   var lbVid = lb.querySelector('video');
