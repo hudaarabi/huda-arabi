@@ -515,7 +515,7 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
 @media (prefers-reduced-motion: reduce) { .gig.soon, .tv { animation: none; } }
 .gallery .feature video { pointer-events: none; }
 @media (max-width: 560px) {
-  .gallery .feature { grid-column: 1 / -1; grid-row: span 2; }
+  .gallery .feature { grid-column: 1 / -1; grid-row: auto; aspect-ratio: 4 / 5; }
   .gallery .badge { bottom: 12px; inset-inline-start: 12px; font-size: .82rem; padding: 6px 12px; }
 }
 </style>
