@@ -549,6 +549,9 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
 .ltab:hover img, .ltab.on img { opacity: 1; }
 .ltab.on { border-color: var(--gold); background: rgba(216,179,106,.14); color: var(--gold-soft); }
 @media (max-width: 960px) { .live-media { order: -1; width: min(100%, 360px); } }
+/* falling 3D rose petals around the hero portrait */
+.portrait .petals { position: absolute; inset: -60px -70px -40px; width: calc(100% + 140px); height: calc(100% + 100px); z-index: 3; pointer-events: none; }
+@media (max-width: 960px) { .portrait .petals { inset: -40px -40px -30px; width: calc(100% + 80px); height: calc(100% + 70px); } }
 </style>
 
 </head>
@@ -590,6 +593,7 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
       </div>
     </div>
     <div class="portrait">
+      <canvas class="petals" id="petals" aria-hidden="true"></canvas>
       <div class="arch"><img src="huda.jpg" alt="الفنانة هدى عربي بثوب سوداني ملوّن بين بتلات الورد"></div>
     </div>
   </div>
@@ -1074,6 +1078,64 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) play(); else { v.pause(); if (!v.muted) setSound(false); } }); }, { threshold: 0.25 }).observe(v);
     } else play();
+  })();
+  /* falling rose petals: each petal tumbles in 3D (flip + spin) while it sways down */
+  (function () {
+    var cv = document.getElementById('petals'); if (!cv || !cv.getContext) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var ctx = cv.getContext('2d'), W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var colors = [['#ff7eb3', '#d61f69'], ['#ffb3cf', '#e2508a'], ['#ff5c8a', '#a3124a'], ['#ffd1e1', '#f06292'], ['#f8f1f4', '#e8a7bf']];
+    var petals = [], running = false, last = 0;
+    function size() {
+      var r = cv.getBoundingClientRect(); W = r.width; H = r.height;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function make(initial) {
+      var c = colors[Math.floor(Math.random() * colors.length)], s = 9 + Math.random() * 13;
+      return { x: Math.random() * W, y: initial ? Math.random() * H : -20 - Math.random() * 60, s: s,
+        vy: 22 + Math.random() * 30, sway: 14 + Math.random() * 26, ph: Math.random() * 6.28, fs: .6 + Math.random() * 1.2,
+        rot: Math.random() * 6.28, vr: (Math.random() - .5) * 1.6, flip: Math.random() * 6.28, vf: 1.2 + Math.random() * 2.4, c: c };
+    }
+    function drawPetal(p) {
+      var f = Math.cos(p.flip), back = f < 0;
+      ctx.save();
+      ctx.translate(p.x + Math.sin(p.ph) * p.sway, p.y);
+      ctx.rotate(p.rot);
+      ctx.scale(Math.max(.12, Math.abs(f)), 1);
+      var g = ctx.createLinearGradient(0, -p.s, 0, p.s);
+      g.addColorStop(0, back ? p.c[1] : p.c[0]); g.addColorStop(1, back ? '#7a0f3a' : p.c[1]);
+      ctx.fillStyle = g;
+      ctx.globalAlpha = Math.min(1, (p.y + 20) / 60) * Math.min(1, (H - p.y) / 70) * (back ? .85 : .95);
+      ctx.beginPath();
+      ctx.moveTo(0, p.s);
+      ctx.bezierCurveTo(p.s * .95, p.s * .35, p.s * .7, -p.s * .9, 0, -p.s * .55);
+      ctx.bezierCurveTo(-p.s * .7, -p.s * .9, -p.s * .95, p.s * .35, 0, p.s);
+      ctx.fill();
+      ctx.globalAlpha *= .35; ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = .8;
+      ctx.beginPath(); ctx.moveTo(0, p.s * .8); ctx.quadraticCurveTo(p.s * .12, 0, 0, -p.s * .4); ctx.stroke();
+      ctx.restore();
+    }
+    function frame(t) {
+      if (!running) return;
+      var dt = Math.min(.05, (t - last) / 1000 || 0); last = t;
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < petals.length; i++) {
+        var p = petals[i];
+        p.y += p.vy * dt; p.ph += p.fs * dt; p.rot += p.vr * dt; p.flip += p.vf * dt;
+        if (p.y > H + 30) petals[i] = make(false);
+        drawPetal(p);
+      }
+      requestAnimationFrame(frame);
+    }
+    function start() { if (running) return; running = true; last = performance.now(); requestAnimationFrame(frame); }
+    function stop() { running = false; }
+    size();
+    var n = W < 420 ? 16 : 26;
+    for (var i = 0; i < n; i++) petals.push(make(true));
+    window.addEventListener('resize', size);
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }).observe(cv);
+    else start();
   })();
   var items = Array.prototype.slice.call(document.querySelectorAll('#galleryGrid button'));
   var lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img'), idx = 0;
