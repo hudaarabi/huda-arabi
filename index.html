@@ -753,11 +753,12 @@ body.has-announce .hero .wrap { padding-top: 165px; }
 .intro.done { opacity: 0; visibility: hidden; }
 .intro-in { text-align: center; display: grid; justify-items: center; gap: 10px; }
 .intro-name { font-family: "Aref Ruqaa", serif; font-weight: 700; font-size: clamp(3.6rem, 13vw, 8rem); line-height: 1.25; padding: .15em .25em;
-  background: linear-gradient(180deg, #fff3d6 10%, #d8b36a 60%, #a37a35); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  clip-path: inset(0 0 0 100%); animation: introWrite 1.1s cubic-bezier(.6,0,.2,1) .1s forwards; filter: drop-shadow(0 0 30px rgba(216,179,106,.35)); }
+  background: linear-gradient(180deg, #fff3d6 10%, #d8b36a 60%, #a37a35); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: #d8b36a; }
+/* the wipe sits on a wrapper: iPhone Safari drops text painted with background-clip when clip-path or filter is on the same element */
+.intro-wipe { clip-path: inset(0 0 0 100%); -webkit-clip-path: inset(0 0 0 100%); animation: introWrite 1.1s cubic-bezier(.6,0,.2,1) .1s forwards; }
 .intro-sub { font-family: "Cormorant Garamond", serif; font-weight: 600; letter-spacing: .6em; color: #f1ddb0; font-size: clamp(.8rem, 2vw, 1rem); opacity: 0; animation: introFade .6s ease .8s forwards; direction: ltr; }
 .intro-line { width: 0; height: 1px; background: linear-gradient(90deg, transparent, #d8b36a, transparent); animation: introLine .8s ease .7s forwards; }
-@keyframes introWrite { to { clip-path: inset(0 0 0 0); } }
+@keyframes introWrite { to { clip-path: inset(0 0 0 0); -webkit-clip-path: inset(0 0 0 0); } }
 @keyframes introFade { to { opacity: .9; letter-spacing: .45em; } }
 @keyframes introLine { to { width: min(320px, 60vw); } }
 /* ---------- scroll progress ---------- */
@@ -771,7 +772,7 @@ body.has-announce .hero .wrap { padding-top: 165px; }
 .disc::after { content: ""; position: absolute; width: 9px; height: 9px; border-radius: 50%; background: #0b080c; box-shadow: 0 0 0 2px rgba(216,179,106,.8); z-index: 2; }
 @media (prefers-reduced-motion: no-preference) { .playing .disc img, .playing .disc { animation: vinylSpin 3.2s linear infinite; } .playing .disc img { animation: none; } }
 @keyframes vinylSpin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .intro-name { animation: none; clip-path: none; } .intro-sub { animation: none; opacity: .9; } .intro-line { animation: none; width: min(320px, 60vw); } }
+@media (prefers-reduced-motion: reduce) { .intro-wipe { animation: none; clip-path: none; -webkit-clip-path: none; } .intro-sub { animation: none; opacity: .9; } .intro-line { animation: none; width: min(320px, 60vw); } }
 /* ---------- phone performance: drop the heaviest GPU effects on small screens ---------- */
 @media (max-width: 760px) {
   .aurora i { filter: blur(50px); animation: none !important; opacity: .35; }
@@ -786,7 +787,7 @@ body.has-announce .hero .wrap { padding-top: 165px; }
 </head>
 <body>
 <div class="intro" id="intro" aria-hidden="true">
-  <div class="intro-in"><div class="intro-name">هدى عربي</div><div class="intro-sub">THE SULTANA</div><span class="intro-line"></span></div>
+  <div class="intro-in"><div class="intro-wipe"><div class="intro-name">هدى عربي</div></div><div class="intro-sub">THE SULTANA</div><span class="intro-line"></span></div>
 </div>
 <div class="progress" id="progress" aria-hidden="true"></div>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -832,7 +833,6 @@ body.has-announce .hero .wrap { padding-top: 165px; }
 
 <section class="hero" id="top">
   <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="poster2.jpg">
-    <source src="hero2-m.mp4" type="video/mp4" media="(max-width: 760px)">
     <source src="hero2.mp4" type="video/mp4">
   </video>
   <div class="wrap">
@@ -1221,6 +1221,11 @@ body.has-announce .hero .wrap { padding-top: 165px; }
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !menu.hidden) closeM(); });
   })();
 
+  /* lighter hero video on phones */
+  (function () {
+    var hv = document.getElementById('heroVideo');
+    if (hv && window.matchMedia('(max-width: 760px)').matches) { hv.src = 'hero2-m.mp4'; hv.load(); var r = hv.play(); if (r && r.catch) r.catch(function () {}); }
+  })();
   /* intro: show once per browser session, tap to skip */
   (function () {
     var it = document.getElementById('intro'); if (!it) return;
