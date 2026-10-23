@@ -554,6 +554,36 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
 @media (max-width: 960px) { .portrait .petals { inset: -40px -40px -30px; width: calc(100% + 80px); height: calc(100% + 70px); } }
 .hero .latin { margin-top: 18px; }
 @media (max-width: 560px) { .hero .latin { margin-top: 12px; } }
+/* ---------- 3D layered stage behind the about photo ---------- */
+.about-img { perspective: 1100px; isolation: auto; }
+.about-img::before { display: none; }
+.a3d { position: relative; transform-style: preserve-3d; transition: transform .25s ease-out; will-change: transform; }
+.a3d > img { position: relative; transform: translateZ(40px); }
+.a3d .tag { transform: translateZ(95px); }
+.a3d .l-back { position: absolute; inset: -8% -10%; border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%; transform: translateZ(-120px) scale(1.15);
+  background: conic-gradient(from 0deg, #c42f9a, #7b3fe4, #2f63e0, #18b6a4, #d8b36a, #c42f9a); filter: blur(42px); opacity: .75; }
+.a3d .l-ring { position: absolute; left: 50%; top: 50%; width: 118%; aspect-ratio: 1; transform: translate(-50%, -50%) translateZ(-60px) rotateX(68deg); border-radius: 50%;
+  border: 2px solid rgba(241,221,176,.55); box-shadow: 0 0 30px rgba(216,179,106,.45), inset 0 0 30px rgba(216,179,106,.3); }
+.a3d .l-frame { position: absolute; inset: -18px 18px 18px -18px; border-radius: 24px; transform: translateZ(-25px);
+  background: linear-gradient(135deg, rgba(196,47,154,.85), rgba(123,63,228,.85), rgba(47,99,224,.85)); box-shadow: 0 30px 60px rgba(10,4,20,.5); }
+[dir="ltr"] .a3d .l-frame { inset: -18px -18px 18px 18px; }
+.a3d .orb { position: absolute; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff6dc, #d8b36a 45%, #8a6326 100%); box-shadow: 0 0 22px rgba(216,179,106,.7); }
+.a3d .o1 { width: 26px; height: 26px; top: 6%; inset-inline-start: -7%; transform: translateZ(110px); }
+.a3d .o2 { width: 14px; height: 14px; top: 38%; inset-inline-end: -6%; transform: translateZ(80px); }
+.a3d .o3 { width: 18px; height: 18px; bottom: 12%; inset-inline-start: -4%; transform: translateZ(60px); }
+.a3d .o4 { width: 10px; height: 10px; top: -3%; inset-inline-end: 22%; transform: translateZ(130px); }
+@media (prefers-reduced-motion: no-preference) {
+  .a3d .l-back { animation: blobSpin 18s linear infinite; }
+  .a3d .l-ring { animation: ringSpin 14s linear infinite; }
+  .a3d .orb { animation: orbFloat 6s ease-in-out infinite; }
+  .a3d .o2 { animation-delay: -1.5s; } .a3d .o3 { animation-delay: -3s; } .a3d .o4 { animation-delay: -4.5s; }
+  .about-img.idle .a3d { animation: a3dIdle 9s ease-in-out infinite; }
+}
+@keyframes blobSpin { to { transform: translateZ(-120px) scale(1.15) rotate(360deg); } }
+@keyframes ringSpin { to { transform: translate(-50%, -50%) translateZ(-60px) rotateX(68deg) rotateZ(360deg); } }
+@keyframes orbFloat { 50% { margin-top: -14px; } }
+@keyframes a3dIdle { 0%,100% { transform: rotateY(-8deg) rotateX(4deg); } 50% { transform: rotateY(8deg) rotateX(-3deg); } }
+@media (max-width: 560px) { .about-img { width: 86%; } .a3d .l-ring { width: 104%; } .a3d .o1 { inset-inline-start: -3%; } .a3d .o2 { inset-inline-end: -3%; } }
 </style>
 
 </head>
@@ -623,9 +653,15 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
 
 <section class="band" id="about">
   <div class="wrap about">
-    <div class="about-img">
-      <img src="p5.jpg" alt="هدى عربي بثوب أبيض على المسرح" loading="lazy">
-      <span class="tag">السلطانة</span>
+    <div class="about-img" id="about3d">
+      <div class="a3d">
+        <span class="l-back" aria-hidden="true"></span>
+        <span class="l-ring" aria-hidden="true"></span>
+        <span class="l-frame" aria-hidden="true"></span>
+        <span class="orb o1" aria-hidden="true"></span><span class="orb o2" aria-hidden="true"></span><span class="orb o3" aria-hidden="true"></span><span class="orb o4" aria-hidden="true"></span>
+        <img src="p5.jpg" alt="هدى عربي بثوب أبيض على المسرح" loading="lazy">
+        <span class="tag">السلطانة</span>
+      </div>
     </div>
     <div class="about-text">
       <div class="head">
@@ -1138,6 +1174,20 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }).observe(cv);
     else start();
+  })();
+  /* 3D tilt for the about photo: follows the mouse on desktop, gentle sway on touch screens */
+  (function () {
+    var box = document.getElementById('about3d'); if (!box) return;
+    var inner = box.querySelector('.a3d');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!window.matchMedia('(hover: hover)').matches) { box.classList.add('idle'); return; }
+    box.classList.add('idle');
+    box.addEventListener('mousemove', function (e) {
+      box.classList.remove('idle');
+      var r = box.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      inner.style.transform = 'rotateY(' + (x * 22) + 'deg) rotateX(' + (-y * 18) + 'deg)';
+    });
+    box.addEventListener('mouseleave', function () { inner.style.transform = ''; box.classList.add('idle'); });
   })();
   var items = Array.prototype.slice.call(document.querySelectorAll('#galleryGrid button'));
   var lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img'), idx = 0;
