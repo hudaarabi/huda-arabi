@@ -771,7 +771,7 @@ body.has-announce .hero .wrap { padding-top: 165px; }
 .disc::after { content: ""; position: absolute; width: 9px; height: 9px; border-radius: 50%; background: #0b080c; box-shadow: 0 0 0 2px rgba(216,179,106,.8); z-index: 2; }
 @media (prefers-reduced-motion: no-preference) { .playing .disc img, .playing .disc { animation: vinylSpin 3.2s linear infinite; } .playing .disc img { animation: none; } }
 @keyframes vinylSpin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .intro { display: none; } }
+@media (prefers-reduced-motion: reduce) { .intro-name { animation: none; clip-path: none; } .intro-sub { animation: none; opacity: .9; } .intro-line { animation: none; width: min(320px, 60vw); } }
 </style>
 
 </head>
@@ -1215,7 +1215,7 @@ body.has-announce .hero .wrap { padding-top: 165px; }
   (function () {
     var it = document.getElementById('intro'); if (!it) return;
     var seen = false; try { seen = sessionStorage.getItem('huda-intro') === '1'; } catch (e) {}
-    if (seen || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { it.remove(); return; }
+    if (seen) { it.remove(); return; }
     try { sessionStorage.setItem('huda-intro', '1'); } catch (e) {}
     function end() { it.classList.add('done'); setTimeout(function () { it.remove(); }, 800); }
     it.addEventListener('click', end);
