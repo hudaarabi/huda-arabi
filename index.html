@@ -604,6 +604,20 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
 /* keep the gold ring fully behind the photos (flat ellipse instead of a tilted 3D ring) */
 .a3d .l-ring { width: 124%; aspect-ratio: auto; height: 34%; top: 58%; transform: translate(-50%, -50%) translateZ(-90px); animation: ringGlow 4s ease-in-out infinite !important; }
 @keyframes ringGlow { 50% { box-shadow: 0 0 50px rgba(216,179,106,.75), inset 0 0 40px rgba(216,179,106,.45); border-color: rgba(241,221,176,.85); } }
+/* N-photo stack: pos 0 front, 1 and 2 peek behind, the rest wait hidden at the back */
+.a3d .card { transition: transform .9s cubic-bezier(.6,0,.3,1), filter .9s, opacity .9s; }
+.a3d .card[data-pos="0"] { transform: translateZ(0) rotate(0deg); filter: none; opacity: 1; }
+.a3d .card[data-pos="1"] { transform: translate(-8%, -5%) rotate(-7deg) translateZ(-45px) scale(.93); filter: brightness(.7) saturate(.9); opacity: 1; }
+.a3d .card[data-pos="2"] { transform: translate(7%, -8%) rotate(6deg) translateZ(-85px) scale(.87); filter: brightness(.5) saturate(.8); opacity: 1; }
+.a3d .card[data-pos="3"], .a3d .card[data-pos="4"], .a3d .card[data-pos="5"], .a3d .card[data-pos="6"] { transform: translate(0, -10%) rotate(0deg) translateZ(-120px) scale(.8); filter: brightness(.4); opacity: 0; }
+[dir="ltr"] .a3d .card[data-pos="1"] { transform: translate(8%, -5%) rotate(7deg) translateZ(-45px) scale(.93); }
+[dir="ltr"] .a3d .card[data-pos="2"] { transform: translate(-7%, -8%) rotate(-6deg) translateZ(-85px) scale(.87); }
+.a3d .card.leaving { animation: cardLeave 1s cubic-bezier(.6,0,.3,1) forwards; transition: none; }
+@keyframes cardLeave {
+  0% { transform: translateZ(0) rotate(0deg); filter: none; opacity: 1; }
+  45% { transform: translateX(62%) rotate(12deg) translateZ(20px); filter: none; opacity: 1; }
+  100% { transform: translate(0, -10%) rotate(0deg) translateZ(-120px) scale(.8); filter: brightness(.4); opacity: 0; }
+}
 </style>
 
 </head>
@@ -680,8 +694,11 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
         <span class="l-frame" aria-hidden="true"></span>
         <span class="orb o1" aria-hidden="true"></span><span class="orb o2" aria-hidden="true"></span><span class="orb o3" aria-hidden="true"></span><span class="orb o4" aria-hidden="true"></span>
         <div class="stack" id="aboutStack">
-          <img class="card is-front" src="p1.jpg" alt="هدى عربي على المسرح بفستان كحلي" loading="lazy">
-          <img class="card is-back" src="p9.jpg" alt="هدى عربي بثوب بني وذهبي" loading="lazy">
+          <img class="card" data-pos="0" src="p1.jpg" alt="هدى عربي على المسرح بفستان كحلي" loading="lazy">
+          <img class="card" data-pos="1" src="p12.jpg" alt="هدى عربي بثوب أبيض مطرز بالألوان" loading="lazy">
+          <img class="card" data-pos="2" src="p9.jpg" alt="هدى عربي بثوب بني وذهبي" loading="lazy">
+          <img class="card" data-pos="3" src="p13.jpg" alt="هدى عربي بثوب أزرق مخضر" loading="lazy">
+          <img class="card" data-pos="4" src="huda.jpg" alt="هدى عربي بين بتلات الورد" loading="lazy">
         </div>
         <span class="tag">السلطانة</span>
       </div>
@@ -1217,13 +1234,12 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
     var st = document.getElementById('aboutStack'); if (!st) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var visible = false, timer = null;
+    var cards = Array.prototype.slice.call(st.querySelectorAll('.card')), n = cards.length;
     function swap() {
-      var f = st.querySelector('.is-front'), b = st.querySelector('.is-back');
-      f.classList.add('go-back'); b.classList.add('go-front');
-      setTimeout(function () {
-        f.classList.remove('is-front', 'go-back'); f.classList.add('is-back');
-        b.classList.remove('is-back', 'go-front'); b.classList.add('is-front');
-      }, 1000);
+      var f = null;
+      cards.forEach(function (c) { var pos = +c.dataset.pos; if (pos === 0) f = c; else c.dataset.pos = pos - 1; });
+      f.classList.add('leaving');
+      setTimeout(function () { f.dataset.pos = n - 1; f.classList.remove('leaving'); }, 1000);
     }
     function run() { if (!timer) timer = setInterval(function () { if (visible && !document.hidden) swap(); }, 4500); }
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }).observe(st);
