@@ -618,6 +618,49 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
   45% { transform: translateX(62%) rotate(12deg) translateZ(20px); filter: none; opacity: 1; }
   100% { transform: translate(0, -10%) rotate(0deg) translateZ(-120px) scale(.8); filter: brightness(.4); opacity: 0; }
 }
+/* ---------- 3D stage behind the live concert video ---------- */
+.live-3d { perspective: 1100px; position: relative; }
+.l3d { position: relative; transform-style: preserve-3d; transition: transform .25s ease-out; }
+.l3d .phone-frame { transform: translateZ(40px); }
+.l3d .lb { position: absolute; inset: -12% -30%; border-radius: 45% 55% 50% 50%; transform: translateZ(-140px) scale(1.1);
+  background: conic-gradient(from 90deg, #c42f9a, #7b3fe4, #2f63e0, #18b6a4, #d8b36a, #c42f9a); filter: blur(50px); opacity: .7; }
+.l3d .lr { position: absolute; left: 50%; border-radius: 50%; border: 2px solid rgba(241,221,176,.6); box-shadow: 0 0 30px rgba(216,179,106,.5), inset 0 0 25px rgba(216,179,106,.3); }
+.l3d .lr1 { width: 150%; height: 22%; top: 30%; transform: translate(-50%, -50%) translateZ(-90px) rotate(-12deg); }
+.l3d .lr2 { width: 130%; height: 18%; top: 74%; transform: translate(-50%, -50%) translateZ(-110px) rotate(10deg); border-color: rgba(226,80,138,.6); box-shadow: 0 0 30px rgba(226,80,138,.45); }
+.l3d .shp { position: absolute; pointer-events: none; }
+.l3d .n1, .l3d .n2, .l3d .n3, .l3d .n4 { font-size: 34px; line-height: 1; color: var(--gold-soft); text-shadow: 0 0 18px rgba(216,179,106,.8); }
+.l3d .n1 { top: 8%; inset-inline-start: -22%; transform: translateZ(90px); }
+.l3d .n2 { top: 44%; inset-inline-end: -24%; font-size: 42px; transform: translateZ(60px); color: #ff9ac4; text-shadow: 0 0 18px rgba(226,80,138,.8); }
+.l3d .n3 { bottom: 14%; inset-inline-start: -18%; font-size: 26px; transform: translateZ(110px); }
+.l3d .n4 { top: -4%; inset-inline-end: -10%; font-size: 28px; transform: translateZ(40px); color: #8fd9ff; text-shadow: 0 0 18px rgba(47,99,224,.8); }
+.l3d .d1, .l3d .d2 { width: 22px; height: 22px; border: 2px solid var(--gold); transform: translateZ(70px) rotate(45deg); box-shadow: 0 0 14px rgba(216,179,106,.6); }
+.l3d .d1 { top: 24%; inset-inline-end: -16%; }
+.l3d .d2 { bottom: 30%; inset-inline-start: -26%; width: 14px; height: 14px; border-color: #ff9ac4; }
+.l3d .c1, .l3d .c2, .l3d .c3 { border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff6dc, #d8b36a 45%, #8a6326 100%); box-shadow: 0 0 20px rgba(216,179,106,.7); }
+.l3d .c1 { width: 20px; height: 20px; top: 62%; inset-inline-end: -12%; transform: translateZ(120px); }
+.l3d .c2 { width: 12px; height: 12px; top: 18%; inset-inline-start: -10%; transform: translateZ(50px); }
+.l3d .c3 { width: 16px; height: 16px; bottom: -3%; inset-inline-end: 12%; transform: translateZ(80px); }
+@media (prefers-reduced-motion: no-preference) {
+  .l3d .lb { animation: lbSpin 20s linear infinite; }
+  .l3d .lr1 { animation: lrPulse 4s ease-in-out infinite; }
+  .l3d .lr2 { animation: lrPulse 5s ease-in-out infinite -2s; }
+  .l3d .shp { animation: shpFloat 6s ease-in-out infinite; }
+  .l3d .n2, .l3d .c1 { animation-duration: 7.5s; animation-delay: -2s; }
+  .l3d .n3, .l3d .d2 { animation-duration: 5.2s; animation-delay: -3.5s; }
+  .l3d .n4, .l3d .c3 { animation-duration: 8s; animation-delay: -1s; }
+  .live-3d.idle .l3d { animation: a3dIdle 10s ease-in-out infinite; }
+}
+@keyframes lbSpin { to { transform: translateZ(-140px) scale(1.1) rotate(360deg); } }
+@keyframes lrPulse { 50% { opacity: .45; } }
+@keyframes shpFloat { 0%,100% { margin-top: 0; opacity: 1; } 50% { margin-top: -22px; opacity: .7; } }
+@media (max-width: 560px) {
+  .l3d .n1 { inset-inline-start: -8%; } .l3d .n2 { inset-inline-end: -8%; } .l3d .n3 { inset-inline-start: -6%; }
+  .l3d .d1 { inset-inline-end: -6%; } .l3d .d2 { inset-inline-start: -8%; } .l3d .c1 { inset-inline-end: -5%; }
+  .l3d .lr1, .l3d .lr2 { width: 115%; }
+}
+.band, .hero { overflow-x: clip; }
+html, body { overflow-x: clip; }
+@media (max-width: 560px) { .live-media { width: min(80%, 320px); } }
 </style>
 
 </head>
@@ -736,6 +779,11 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
       </div>
     </div>
     <div class="live-media">
+    <div class="live-3d" id="live3d"><div class="l3d">
+      <span class="lb" aria-hidden="true"></span>
+      <span class="lr lr1" aria-hidden="true"></span><span class="lr lr2" aria-hidden="true"></span>
+      <span class="shp n1" aria-hidden="true">♪</span><span class="shp n2" aria-hidden="true">♫</span><span class="shp n3" aria-hidden="true">♪</span><span class="shp n4" aria-hidden="true">♫</span>
+      <span class="shp d1" aria-hidden="true"></span><span class="shp d2" aria-hidden="true"></span><span class="shp c1" aria-hidden="true"></span><span class="shp c2" aria-hidden="true"></span><span class="shp c3" aria-hidden="true"></span>
     <div class="phone-frame">
       <video id="liveVideo" src="live.mp4" poster="live.jpg" muted loop playsinline webkit-playsinline preload="metadata" aria-label="هدى عربي على مسرح مهرجان Passport to the World"></video>
       <button class="live-mute" type="button" id="liveMute" aria-label="تشغيل الصوت" aria-pressed="false">
@@ -743,6 +791,7 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
         <svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
       </button>
     </div>
+    </div></div>
     <div class="live-tabs" role="tablist" aria-label="مقاطع الحفلات">
       <button type="button" class="ltab on" role="tab" aria-selected="true" data-src="live.mp4" data-poster="live.jpg"><img src="live-t.jpg" alt=""><span>Passport to the World</span></button>
       <button type="button" class="ltab" role="tab" aria-selected="false" data-src="live-a.mp4" data-poster="live-a.jpg"><img src="live-a-t.jpg" alt=""><span>ليلة طرب</span></button>
@@ -1246,6 +1295,20 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }).observe(st);
     else visible = true;
     run();
+  })();
+  /* tilt for the live concert 3D stage */
+  (function () {
+    var box = document.getElementById('live3d'); if (!box) return;
+    var inner = box.querySelector('.l3d');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    box.classList.add('idle');
+    if (!window.matchMedia('(hover: hover)').matches) return;
+    box.addEventListener('mousemove', function (e) {
+      box.classList.remove('idle');
+      var r = box.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      inner.style.transform = 'rotateY(' + (x * 20) + 'deg) rotateX(' + (-y * 14) + 'deg)';
+    });
+    box.addEventListener('mouseleave', function () { inner.style.transform = ''; box.classList.add('idle'); });
   })();
   var items = Array.prototype.slice.call(document.querySelectorAll('#galleryGrid button'));
   var lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img'), idx = 0;
