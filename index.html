@@ -748,10 +748,38 @@ body.has-announce .hero .wrap { padding-top: 165px; }
 @media (max-width: 420px) { .fg-meta { grid-template-columns: 1fr; } }
 .epk-link { display: inline-block; margin: -10px 0 22px; color: var(--gold-soft); font-size: .92rem; text-underline-offset: 4px; }
 .epk-link::after { content: " ←"; } [lang="en"] .epk-link::after { content: " →"; }
+/* ---------- cinematic intro (once per visit) ---------- */
+.intro { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; background: radial-gradient(ellipse at center, #2a1150, #0e0618 70%); transition: opacity .7s ease, visibility .7s; }
+.intro.done { opacity: 0; visibility: hidden; }
+.intro-in { text-align: center; display: grid; justify-items: center; gap: 10px; }
+.intro-name { font-family: "Aref Ruqaa", serif; font-weight: 700; font-size: clamp(3.6rem, 13vw, 8rem); line-height: 1.25; padding: .15em .25em;
+  background: linear-gradient(180deg, #fff3d6 10%, #d8b36a 60%, #a37a35); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  clip-path: inset(0 0 0 100%); animation: introWrite 1.4s cubic-bezier(.6,0,.2,1) .15s forwards; filter: drop-shadow(0 0 30px rgba(216,179,106,.35)); }
+.intro-sub { font-family: "Cormorant Garamond", serif; font-weight: 600; letter-spacing: .6em; color: #f1ddb0; font-size: clamp(.8rem, 2vw, 1rem); opacity: 0; animation: introFade .8s ease 1.2s forwards; direction: ltr; }
+.intro-line { width: 0; height: 1px; background: linear-gradient(90deg, transparent, #d8b36a, transparent); animation: introLine 1s ease 1s forwards; }
+@keyframes introWrite { to { clip-path: inset(0 0 0 0); } }
+@keyframes introFade { to { opacity: .9; letter-spacing: .45em; } }
+@keyframes introLine { to { width: min(320px, 60vw); } }
+/* ---------- scroll progress ---------- */
+.progress { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; height: 3px; z-index: 70; transform-origin: right; transform: scaleX(0);
+  background: linear-gradient(90deg, #ff4f9a, #d8b36a, #f1ddb0); box-shadow: 0 0 12px rgba(216,179,106,.7); pointer-events: none; }
+[dir="ltr"] .progress, [lang="en"] ~ .progress { transform-origin: left; }
+/* ---------- vinyl record in the song player ---------- */
+.disc { border-radius: 50%; background: repeating-radial-gradient(circle at center, #141015 0 2px, #1e181f 2px 4px), #111; box-shadow: 0 20px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.12), inset 0 0 0 6px #0b080c; display: grid; place-items: center; }
+.disc::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 30deg, transparent 0 15%, rgba(255,255,255,.14) 20%, transparent 26% 60%, rgba(255,255,255,.1) 66%, transparent 72%); pointer-events: none; z-index: 1; }
+.disc img { position: relative; width: 58%; height: 58%; border-radius: 50%; box-shadow: 0 0 0 3px rgba(216,179,106,.6); }
+.disc::after { content: ""; position: absolute; width: 9px; height: 9px; border-radius: 50%; background: #0b080c; box-shadow: 0 0 0 2px rgba(216,179,106,.8); z-index: 2; }
+@media (prefers-reduced-motion: no-preference) { .playing .disc img, .playing .disc { animation: vinylSpin 3.2s linear infinite; } .playing .disc img { animation: none; } }
+@keyframes vinylSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .intro { display: none; } }
 </style>
 
 </head>
 <body>
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-in"><div class="intro-name">هدى عربي</div><div class="intro-sub">THE SULTANA</div><span class="intro-line"></span></div>
+</div>
+<div class="progress" id="progress" aria-hidden="true"></div>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <div dir="rtl" lang="ar" id="site">
 
@@ -1181,6 +1209,23 @@ body.has-announce .hero .wrap { padding-top: 165px; }
     document.getElementById('menuClose').addEventListener('click', closeM);
     menu.addEventListener('click', function (e) { if (e.target === menu || e.target.closest('a')) closeM(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !menu.hidden) closeM(); });
+  })();
+
+  /* intro: show once per browser session, tap to skip */
+  (function () {
+    var it = document.getElementById('intro'); if (!it) return;
+    var seen = false; try { seen = sessionStorage.getItem('huda-intro') === '1'; } catch (e) {}
+    if (seen || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { it.remove(); return; }
+    try { sessionStorage.setItem('huda-intro', '1'); } catch (e) {}
+    function end() { it.classList.add('done'); setTimeout(function () { it.remove(); }, 800); }
+    it.addEventListener('click', end);
+    setTimeout(end, 2300);
+  })();
+  /* scroll progress bar */
+  (function () {
+    var pb = document.getElementById('progress'); if (!pb) return;
+    function upd() { var h = document.documentElement.scrollHeight - innerHeight; pb.style.transform = 'scaleX(' + (h > 0 ? Math.min(1, scrollY / h) : 0) + ')'; }
+    addEventListener('scroll', upd, { passive: true }); addEventListener('resize', upd); upd();
   })();
 
   var bar = document.getElementById('topbar');
