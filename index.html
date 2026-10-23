@@ -584,6 +584,26 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
 @keyframes orbFloat { 50% { margin-top: -14px; } }
 @keyframes a3dIdle { 0%,100% { transform: rotateY(-8deg) rotateX(4deg); } 50% { transform: rotateY(8deg) rotateX(-3deg); } }
 @media (max-width: 560px) { .about-img { width: 86%; } .a3d .l-ring { width: 104%; } .a3d .o1 { inset-inline-start: -3%; } .a3d .o2 { inset-inline-end: -3%; } }
+/* two photos stacked in 3D that swap places on their own */
+.a3d .stack { position: relative; aspect-ratio: 4 / 5; transform: translateZ(40px); transform-style: preserve-3d; }
+.a3d .card { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; border-radius: var(--radius); box-shadow: 0 0 0 1px rgba(241,221,176,.3), 0 30px 70px rgba(10,4,20,.55); backface-visibility: hidden; }
+.a3d .card.is-front { transform: translateZ(0) rotate(0deg); filter: none; }
+.a3d .card.is-back { transform: translate(-8%, -5%) rotate(-7deg) translateZ(-45px) scale(.93); filter: brightness(.7) saturate(.9); }
+[dir="ltr"] .a3d .card.is-back { transform: translate(8%, -5%) rotate(7deg) translateZ(-45px) scale(.93); }
+.a3d .card.go-back { animation: cardToBack 1s cubic-bezier(.6,0,.3,1) forwards; }
+.a3d .card.go-front { animation: cardToFront 1s cubic-bezier(.6,0,.3,1) forwards; }
+@keyframes cardToBack {
+  0% { transform: translateZ(0) rotate(0deg); filter: none; }
+  45% { transform: translateX(62%) rotate(12deg) translateZ(20px); filter: none; }
+  100% { transform: translate(-8%, -5%) rotate(-7deg) translateZ(-45px) scale(.93); filter: brightness(.7) saturate(.9); }
+}
+@keyframes cardToFront {
+  0% { transform: translate(-8%, -5%) rotate(-7deg) translateZ(-45px) scale(.93); filter: brightness(.7) saturate(.9); }
+  100% { transform: translateZ(0) rotate(0deg); filter: none; }
+}
+/* keep the gold ring fully behind the photos (flat ellipse instead of a tilted 3D ring) */
+.a3d .l-ring { width: 124%; aspect-ratio: auto; height: 34%; top: 58%; transform: translate(-50%, -50%) translateZ(-90px); animation: ringGlow 4s ease-in-out infinite !important; }
+@keyframes ringGlow { 50% { box-shadow: 0 0 50px rgba(216,179,106,.75), inset 0 0 40px rgba(216,179,106,.45); border-color: rgba(241,221,176,.85); } }
 </style>
 
 </head>
@@ -659,7 +679,10 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
         <span class="l-ring" aria-hidden="true"></span>
         <span class="l-frame" aria-hidden="true"></span>
         <span class="orb o1" aria-hidden="true"></span><span class="orb o2" aria-hidden="true"></span><span class="orb o3" aria-hidden="true"></span><span class="orb o4" aria-hidden="true"></span>
-        <img src="p5.jpg" alt="هدى عربي بثوب أبيض على المسرح" loading="lazy">
+        <div class="stack" id="aboutStack">
+          <img class="card is-front" src="p1.jpg" alt="هدى عربي على المسرح بفستان كحلي" loading="lazy">
+          <img class="card is-back" src="p9.jpg" alt="هدى عربي بثوب بني وذهبي" loading="lazy">
+        </div>
         <span class="tag">السلطانة</span>
       </div>
     </div>
@@ -1188,6 +1211,24 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
       inner.style.transform = 'rotateY(' + (x * 22) + 'deg) rotateX(' + (-y * 18) + 'deg)';
     });
     box.addEventListener('mouseleave', function () { inner.style.transform = ''; box.classList.add('idle'); });
+  })();
+  /* about photos: the front photo slides out and tucks behind every few seconds */
+  (function () {
+    var st = document.getElementById('aboutStack'); if (!st) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var visible = false, timer = null;
+    function swap() {
+      var f = st.querySelector('.is-front'), b = st.querySelector('.is-back');
+      f.classList.add('go-back'); b.classList.add('go-front');
+      setTimeout(function () {
+        f.classList.remove('is-front', 'go-back'); f.classList.add('is-back');
+        b.classList.remove('is-back', 'go-front'); b.classList.add('is-front');
+      }, 1000);
+    }
+    function run() { if (!timer) timer = setInterval(function () { if (visible && !document.hidden) swap(); }, 4500); }
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }).observe(st);
+    else visible = true;
+    run();
   })();
   var items = Array.prototype.slice.call(document.querySelectorAll('#galleryGrid button'));
   var lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img'), idx = 0;
