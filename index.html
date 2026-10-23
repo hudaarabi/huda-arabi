@@ -754,9 +754,9 @@ body.has-announce .hero .wrap { padding-top: 165px; }
 .intro-in { text-align: center; display: grid; justify-items: center; gap: 10px; }
 .intro-name { font-family: "Aref Ruqaa", serif; font-weight: 700; font-size: clamp(3.6rem, 13vw, 8rem); line-height: 1.25; padding: .15em .25em;
   background: linear-gradient(180deg, #fff3d6 10%, #d8b36a 60%, #a37a35); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  clip-path: inset(0 0 0 100%); animation: introWrite 1.4s cubic-bezier(.6,0,.2,1) .15s forwards; filter: drop-shadow(0 0 30px rgba(216,179,106,.35)); }
-.intro-sub { font-family: "Cormorant Garamond", serif; font-weight: 600; letter-spacing: .6em; color: #f1ddb0; font-size: clamp(.8rem, 2vw, 1rem); opacity: 0; animation: introFade .8s ease 1.2s forwards; direction: ltr; }
-.intro-line { width: 0; height: 1px; background: linear-gradient(90deg, transparent, #d8b36a, transparent); animation: introLine 1s ease 1s forwards; }
+  clip-path: inset(0 0 0 100%); animation: introWrite 1.1s cubic-bezier(.6,0,.2,1) .1s forwards; filter: drop-shadow(0 0 30px rgba(216,179,106,.35)); }
+.intro-sub { font-family: "Cormorant Garamond", serif; font-weight: 600; letter-spacing: .6em; color: #f1ddb0; font-size: clamp(.8rem, 2vw, 1rem); opacity: 0; animation: introFade .6s ease .8s forwards; direction: ltr; }
+.intro-line { width: 0; height: 1px; background: linear-gradient(90deg, transparent, #d8b36a, transparent); animation: introLine .8s ease .7s forwards; }
 @keyframes introWrite { to { clip-path: inset(0 0 0 0); } }
 @keyframes introFade { to { opacity: .9; letter-spacing: .45em; } }
 @keyframes introLine { to { width: min(320px, 60vw); } }
@@ -772,6 +772,15 @@ body.has-announce .hero .wrap { padding-top: 165px; }
 @media (prefers-reduced-motion: no-preference) { .playing .disc img, .playing .disc { animation: vinylSpin 3.2s linear infinite; } .playing .disc img { animation: none; } }
 @keyframes vinylSpin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .intro-name { animation: none; clip-path: none; } .intro-sub { animation: none; opacity: .9; } .intro-line { animation: none; width: min(320px, 60vw); } }
+/* ---------- phone performance: drop the heaviest GPU effects on small screens ---------- */
+@media (max-width: 760px) {
+  .aurora i { filter: blur(50px); animation: none !important; opacity: .35; }
+  .platform, .social, .facts div, .moment, .tv, .strip, .booking, .gig.soon, .announce, .a3d .l-back, .l3d .lb { animation: none !important; }
+  .topbar.solid, .btn-ghost, .sound button, .sound .hint, .live-mute, .gallery .badge, .lang, .burger, .ph a { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .topbar.solid { background: rgba(28,12,48,.96); }
+  .a3d .l-back, .l3d .lb { filter: blur(30px); }
+  .strip a::after { animation: none !important; display: none; }
+}
 </style>
 
 </head>
@@ -823,6 +832,7 @@ body.has-announce .hero .wrap { padding-top: 165px; }
 
 <section class="hero" id="top">
   <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="poster2.jpg">
+    <source src="hero2-m.mp4" type="video/mp4" media="(max-width: 760px)">
     <source src="hero2.mp4" type="video/mp4">
   </video>
   <div class="wrap">
@@ -1148,7 +1158,7 @@ body.has-announce .hero .wrap { padding-top: 165px; }
           </div>
         </div>
       </div>
-      <div class="booking-img"><div class="bk-video"><video id="bkVideo" src="hero.mp4" poster="poster.jpg" muted loop playsinline webkit-playsinline preload="metadata" aria-label="هدى عربي تحمل بطاقة إدارة أعمالها"></video><button class="live-mute" type="button" id="bkMute" aria-label="تشغيل الصوت" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg></button></div></div>
+      <div class="booking-img"><div class="bk-video"><video id="bkVideo" src="hero.mp4" poster="poster.jpg" muted loop playsinline webkit-playsinline preload="none" aria-label="هدى عربي تحمل بطاقة إدارة أعمالها"></video><button class="live-mute" type="button" id="bkMute" aria-label="تشغيل الصوت" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg><svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg></button></div></div>
     </div>
   </div>
 </section>
@@ -1219,7 +1229,7 @@ body.has-announce .hero .wrap { padding-top: 165px; }
     try { sessionStorage.setItem('huda-intro', '1'); } catch (e) {}
     function end() { it.classList.add('done'); setTimeout(function () { it.remove(); }, 800); }
     it.addEventListener('click', end);
-    setTimeout(end, 2300);
+    setTimeout(end, 1700);
   })();
   /* scroll progress bar */
   (function () {
@@ -1402,7 +1412,7 @@ body.has-announce .hero .wrap { padding-top: 165px; }
   (function () {
     var cv = document.getElementById('petals'); if (!cv || !cv.getContext) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var ctx = cv.getContext('2d'), W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var ctx = cv.getContext('2d'), W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, innerWidth < 760 ? 1.5 : 2);
     var colors = [['#ff7eb3', '#d61f69'], ['#ffb3cf', '#e2508a'], ['#ff5c8a', '#a3124a'], ['#ffd1e1', '#f06292'], ['#f8f1f4', '#e8a7bf']];
     var petals = [], running = false, last = 0;
     function size() {
@@ -1449,7 +1459,7 @@ body.has-announce .hero .wrap { padding-top: 165px; }
     function start() { if (running) return; running = true; last = performance.now(); requestAnimationFrame(frame); }
     function stop() { running = false; }
     size();
-    var n = W < 420 ? 16 : 26;
+    var n = W < 420 ? 10 : 24;
     for (var i = 0; i < n; i++) petals.push(make(true));
     window.addEventListener('resize', size);
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
