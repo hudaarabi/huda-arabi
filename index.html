@@ -661,6 +661,26 @@ body { background: radial-gradient(ellipse at top, #2a1150, var(--night) 60%) fi
 .band, .hero { overflow-x: clip; }
 html, body { overflow-x: clip; }
 @media (max-width: 560px) { .live-media { width: min(80%, 320px); } }
+/* platform strip: pill buttons with a play icon and a passing shine so they read as clickable */
+.strip .wrap { gap: 12px 14px; }
+.strip .lbl { display: inline-flex; align-items: center; gap: 8px; font-size: .95rem; letter-spacing: 0; color: var(--gold-soft); margin-inline-end: 6px; }
+.strip .lbl::after { content: "←"; color: var(--gold); }
+[lang="en"] .strip .lbl::after { content: "→"; }
+.strip a { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 9px; padding: 8px 18px 8px 16px; border-radius: 999px;
+  border: 1px solid rgba(241,221,176,.45); background: rgba(255,255,255,.07); opacity: 1; font-size: 1.15rem; color: var(--ink);
+  box-shadow: 0 6px 18px rgba(10,4,20,.25); transition: background .25s, color .25s, transform .25s, box-shadow .25s, border-color .25s; }
+.strip a::before { content: ""; width: 9px; height: 10px; flex: none; background: var(--gold); clip-path: polygon(0 0, 100% 50%, 0 100%); transition: background .25s; }
+.strip a::after { content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 45%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent); transform: skewX(-18deg); pointer-events: none; }
+.strip a:hover, .strip a:focus-visible { background: var(--gold); color: #24170c; border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 10px 26px rgba(216,179,106,.45); }
+.strip a:hover::before, .strip a:focus-visible::before { background: #24170c; }
+@media (prefers-reduced-motion: no-preference) {
+  .strip a::after { animation: pillShine 6s ease-in-out infinite; }
+  .strip a:nth-of-type(2)::after { animation-delay: .5s; } .strip a:nth-of-type(3)::after { animation-delay: 1s; }
+  .strip a:nth-of-type(4)::after { animation-delay: 1.5s; } .strip a:nth-of-type(5)::after { animation-delay: 2s; }
+}
+@keyframes pillShine { 0%, 70% { left: -60%; } 85%, 100% { left: 130%; } }
+@media (max-width: 560px) { .strip a { font-size: 1rem; padding: 7px 14px 7px 12px; } .strip .lbl { width: 100%; justify-content: center; margin: 0; } }
+@media (max-width: 560px) { .strip .lbl::after, [lang="en"] .strip .lbl::after { content: "↓"; } }
 </style>
 
 </head>
